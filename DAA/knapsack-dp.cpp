@@ -42,3 +42,49 @@ int main() {
 
   return 0;
 }
+
+// #include <iostream>
+// #include <vector>
+// using namespace std;
+
+// int solve(int idx, int capacity, const vector<int>& weight, const vector<int>& value,
+//           vector<vector<int>>& dp) {
+
+//     if (idx == 0) {
+//         if (weight[0] <= capacity)
+//             return value[0];
+//         else
+//             return 0;
+//     }
+
+//     if (dp[idx][capacity] != -1)
+//         return dp[idx][capacity];
+
+//     int notPick = solve(idx - 1, capacity, weight, value, dp);
+
+//     int pick = -1e9;
+//     if (weight[idx] <= capacity)
+//         pick = value[idx] + solve(idx - 1, capacity - weight[idx], weight, value, dp);
+
+//     return dp[idx][capacity] = max(pick, notPick);
+// }
+
+// int main() {
+//     int n, capacity;
+//     cout << "Enter number of items: ";
+//     cin >> n;
+//     cout << "Enter capacity of knapsack: ";
+//     cin >> capacity;
+
+//     vector<int> weight(n), value(n);
+//     cout << "Enter weights of items:\n";
+//     for (int i = 0; i < n; i++) cin >> weight[i];
+//     cout << "Enter values of items:\n";
+//     for (int i = 0; i < n; i++) cin >> value[i];
+
+//     vector<vector<int>> dp(n, vector<int>(capacity + 1, -1));
+
+//     cout << "\nMaximum value = " 
+//          << solve(n - 1, capacity, weight, value, dp) 
+//          << endl;
+// }
