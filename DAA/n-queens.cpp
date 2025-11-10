@@ -1,109 +1,64 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <cmath>
 using namespace std;
 
-int COL;
-int ROW;
-int N = 4;
-
-void printSolution(vector<vector<int>> board) {
-  for (int i = 0; i < N; i++) {
-    for (int j = 0; j < N; j++)
-      if (board[i][j])
-        cout << "Q ";
-      else
-        cout << ". ";
-    printf("\n");
-  }
+void printBoard(const vector<int>& pos) {
+    int n = pos.size();
+    for (int r = 0; r < n; ++r) {
+        for (int c = 0; c < n; ++c)
+            cout << (pos[c] == r ? "Q " : ". ");
+        cout << '\n';
+    }
 }
 
-bool isSafe(vector<vector<int>> board, int row, int col) {
-  int i, j;
-
-  // horizontal
-  for (i = 0; i < col; i++)
-    if (board[row][i])
-      return false;
-
-  // vertical
-  for (i = col + 1; i < N; i++)
-    if (board[row][i])
-      return false;
-
-  // bottom right diagonal
-  for (i = row, j = col; i < N && j < N; i++, j++)
-    if (board[i][j])
-      return false;
-
-  // bottom left diagonal
-  for (i = row, j = col; i >= 0 && j < N; i--, j++)
-    if (board[i][j])
-      return false;
-
-  for (i = row, j = col; i >= 0 && j >= 0; i--, j--)
-    if (board[i][j])
-      return false;
-
-  for (i = row, j = col; j >= 0 && i < N; i++, j--)
-    if (board[i][j])
-      return false;
-
-  return true;
-}
-
-bool solveNQUtil(vector<vector<int>> &board, int col) {
-
-  if (col >= N)
+bool isSafe(const vector<int>& pos, int col, int row) {
+    for (int c = 0; c < col; ++c) {
+        int r = pos[c];
+        if (r == row || abs(r - row) == abs(c - col))
+            return false;
+    }
     return true;
-
-  if (col == COL) {
-    if (solveNQUtil(board, col + 1))
-      return true;
-    else {
-      return false;
-    }
-  }
-
-  else {
-    for (int i = 0; i < N; i++) {
-      if (isSafe(board, i, col)) {
-        board[i][col] = 1;
-
-        if (solveNQUtil(board, col + 1))
-          return true;
-
-        board[i][col] = 0;
-      }
-    }
-  }
-
-  return false;
 }
 
-bool solveNQ() {
-  cout << "Enter size of board: ";
-  cin >> N;
-  cout << "Enter row and col of first queen to be placed:\nrow (1-" << N
-       << "): ";
-  cin >> ROW;
-  ROW--;
-  cout << "\ncol(1-" << N << "): ";
-  cin >> COL;
-  COL--;
-  cout << endl;
-  vector<vector<int>> board(N, vector<int>(N, 0));
+bool solve(vector<int>& pos, int col) {
+    int n = pos.size();
+    if (col == n) return true;
 
-  board[ROW][COL] = 1;
+    if (pos[col] != -1)  // pre-placed queen
+        return solve(pos, col + 1);
 
-  if (solveNQUtil(board, 0) == false) {
-    cout << "Solution does not exist";
+    for (int row = 0; row < n; ++row) {
+        if (isSafe(pos, col, row)) {
+            pos[col] = row;
+            if (solve(pos, col + 1))
+                return true;
+            pos[col] = -1;
+        }
+    }
     return false;
-  }
-
-  printSolution(board);
-  return true;
 }
 
 int main() {
-  solveNQ();
-  return 0;
+    int n, r1, c1;
+    cout << "Enter board size: ";
+    cin >> n;
+    cout << "Enter row (1-" << n << "): ";
+    cin >> r1;
+    cout << "Enter column (1-" << n << "): ";
+    cin >> c1;
+
+    --r1; --c1; // convert to 0-based indexing
+    if (r1 < 0 || r1 >= n || c1 < 0 || c1 >= n) {
+        cout << "Invalid position!\n";
+        return 0;
+    }
+
+    vector<int> pos(n, -1);
+    pos[c1] = r1;
+
+    if (solve(pos, 0))
+        printBoard(pos);
+    else
+        cout << "No solution exists.\n";
 }
